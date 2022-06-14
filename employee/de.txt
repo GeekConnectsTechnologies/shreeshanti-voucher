@@ -1,0 +1,211 @@
+<?php
+// We need to use sessions, so you should always start sessions using the below code.
+session_start();
+// If the user is not logged in redirect to the login page...
+if (!isset($_SESSION['loggedin'])) {
+    header('Location: ../login/index.php');
+    exit;
+}
+require_once "../dbc.php";
+
+?>
+<?php include 'layout-header.php'; ?>
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <?php
+                $font = "AGENCYR.TTF";
+                $image = imagecreatefromjpeg("white (2).jpg");
+                $color = imagecolorallocate($image, 19, 21, 22);
+
+
+                $empName = 'Hi Kashyap Pandya ,';
+                imagettftext($image, 20, 0, 25, 335, $color, $font, $empName);
+
+                $notes = 'Message Goes Here';
+                imagettftext($image, 20, 0, 25, 370, $color, $font, $notes);
+
+                // $qrcode = "https://chart.apis.google.com/chart?cht=qr&chs=200x200&chl=18&chco=000000";
+                // imagettftext($image, 20, 0, 15, 120, $color, $font, $qrcode);
+
+                $price = 'Rs. 696';
+                imagettftext($image, 50, 0, 300, 490, $color, $font, $price);
+
+                $edate = '*Valid Till 2022-11-22';
+                imagettftext($image, 20, 0, 300, 530, $color, $font, $edate);
+
+                $src = imagecreatefrompng('https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=18&chco=000000&chld=H|0');
+                $top = imagecreatefrompng("imageupload/1.png");
+                imagecopymerge($image, $src, 30, 410, 0, 0, 150, 150, 100);
+                imagecopymerge($image, $top, 0, 0, 0, 0, 600, 300, 100);
+
+                $file = time();
+                imagejpeg($image, "uploads/" . $file . ".jpg");
+                imagedestroy($image);
+            ?>
+        </div>
+
+        <div class="section-body">
+        </div>
+    </section>
+</div>
+<?php include 'layout-footer.php'; ?>
+
+
+
+
+<!-- voucher id
+voucher name
+voucher price
+voucher expiry date
+message
+description
+T & C
+reedem
+UI image
+companyId
+
+CREATE TABLE voucher
+(
+vId int AUTO_INCREMENT,
+vName varchar(255),
+vPrice int,
+expirydate date,
+message varchar(255),
+description varchar(2000),
+tc varchar(5000),
+reedem varchar(2000),
+uiimage varchar(255),
+companyId int,
+PRIMARY KEY(vId),
+FOREIGN KEY (companyId) REFERENCES company(companyId)
+);
+
+CREATE TABLE voucher_detailss
+(
+uniqueId int AUTO_INCREMENT,
+vId int,
+empId int,
+reminder int,
+vstatus varchar(255),
+PRIMARY KEY(uniqueId),
+FOREIGN KEY (vId) REFERENCES voucher(vId),
+FOREIGN KEY (empId) REFERENCES employee(empId)
+);
+
+
+Preview image CSS
+update image option
+merge 2 Images -->
+
+
+
+
+
+select employee.empName, employee.email, voucher.message, voucher.vPrice, voucher.expirydate, voucher.uiimage, voucher.vId, voucher_details.uniqueId, voucher_details.empId from voucher_details INNER JOIN voucher on voucher.vId=voucher_details.vId INNER JOIN employee ON employee.empId=voucher_details.empId where voucher_details.vId=3
+
+
+
+
+
+<?php
+// We need to use sessions, so you should always start sessions using the below code.
+session_start();
+// If the user is not logged in redirect to the login page...
+if (!isset($_SESSION['loggedin'])) {
+    header('Location: ../login/index.php');
+    exit;
+}
+require_once "../dbc.php";
+
+$vId = $_GET['vId'];
+$vName = $_GET['vName'];
+
+?>
+
+<?php include 'layout-header.php'; ?>
+<div class="main-content">
+    <section class="section">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4><?php echo $vName ?></h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="table-company">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">
+                                            #
+                                        </th>
+                                        <th>Employee Name</th>
+                                        <th>Email</th>
+                                        <th>Phone No.</th>
+                                        <th>Designation</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $sqlquery = "SELECT employee.empId, employee.empName , employee.phoneNo , employee.email, employee.designation, voucher_details.uniqueId, voucher_details.vstatus, voucher_details.vId FROm voucher_details INNER JOIN employee ON employee.empId=voucher_details.empId where vId = $vId;";
+                                    $result = mysqli_query($con, $sqlquery);
+                                    $counter = 1;
+                                    while ($rowgetdata = mysqli_fetch_array($result)) {
+                                        echo "<tr>";
+                                        echo "<td>" . $counter . "</td>";
+                                        echo "<td>" . $rowgetdata['empName'] . "</td>";
+                                        echo "<td>" . $rowgetdata['email'] . "</td>";
+                                        echo "<td>" . $rowgetdata['phoneNo'] . "</td>";
+                                        echo "<td>" . $rowgetdata['designation'] . "</td>";
+                                        echo "<td>" . $rowgetdata['vstatus'] . "</td>";
+                                        echo "<td><button type='button' class='btn btn-primary' data-toggle='modal' data-target='#".$rowgetdata['uniqueId']."'>View</button></td>";
+                                        $counter++;
+                                        echo "</tr>";
+                                        ?>
+                                        <div class="modal fade" id="<?php echo $rowgetdata['uniqueId'] ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Employee's Voucher Details</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <?php
+                                                        $sqlquery = "SELECT employee.empId, employee.empName , employee.phoneNo , employee.email, employee.designation, voucher_details.vstatus, voucher_details.vId, voucher_details.reedemDate, voucher_details.amount, voucher_details.reminder, voucher.expirydate FROm voucher_details INNER JOIN employee ON voucher_details.uniqueId = ".$rowgetdata['uniqueId']." INNER JOIN voucher ON voucher.vId=voucher_details.vId;";
+                                                        $result = mysqli_query($con, $sqlquery);
+                                                        $data = mysqli_fetch_array($result);
+                                                        echo "Employee Name : " . $data['empName'] . "</br></br>";
+                                                        echo "Employee Phone No. : " . $data['phoneNo'] . "</br></br>";
+                                                        echo "Employee Email : " . $data['email'] . "</br></br>";
+                                                        echo "Employee Designation : " . $data['designation'] . "</br></br>";
+                                                        echo "Voucher Status : " . $data['vstatus'] . "</br></br>";
+                                                        echo "Voucher Expiry Date : " . $data['expirydate'] . "</br></br>";
+                                                        echo "Reedem Date : " . $data['reedemDate'] . "</br></br>";
+                                                        echo "Purchase Amount : " . $data['amount'] . "</br></br>";
+                                                        echo "Reminder Count : " . $data['reminder'] . "</br></br>";
+                                                        ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="section-body">
+        </div>
+    </section>
+</div>
+
+<?php include 'layout-footer.php'; ?>
