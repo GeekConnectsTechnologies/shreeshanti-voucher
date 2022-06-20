@@ -61,9 +61,9 @@ $userName = $_SESSION['userName'];
             <a href="index.php">SS</a>
           </div>
           <ul class="sidebar-menu">
-            <li class="active"><a class="nav-link" href="viewcompany.php"><i class="fas fa-building"></i><span>Company</span></a></li>
-            <!-- <li class="active"><a class="nav-link" href="viewemployee.php"><i class="fas fa-users"></i><span>Employees</span></a></li> -->
-            <li class="active"><a class="nav-link" href="viewvoucher.php"><i class="fas fa-tags"></i><span>Vouchers</span></a></li>
+            <!-- <li class="active"><a class="nav-link" href="viewcompany.php"><i class="fas fa-building"></i><span>Company</span></a></li> -->
+            <li class="active"><a class="nav-link" href="viewemployee.php"><i class="fas fa-users"></i><span>Used / Unused</span></a></li>
+            <li class="active"><a class="nav-link" href="viewrevenue.php"><i class="fas fa-tags"></i><span>Revenue</span></a></li>
             <!-- <li class="menu-header">Dashboard</li>
             <li class="nav-item dropdown">
               <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>

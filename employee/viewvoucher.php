@@ -2,10 +2,17 @@
 // We need to use sessions, so you should always start sessions using the below code.
 session_start();
 // If the user is not logged in redirect to the login page...
-if (!isset($_SESSION['loggedin'])) {
-	header('Location: ../login/index.php');
-	exit;
-}
+if(!isset($_SESSION['IS_LOGIN']))
+  {
+    header('location:../index.php');
+    die();
+  }
+
+  if(isset($_SESSION['ROLE']) && $_SESSION['ROLE']!='2')
+  {
+    header('location:../index.php');
+    die();
+  }
 require_once "../dbc.php";
 ?>
 <?php include 'layout-header.php'; ?>
@@ -22,50 +29,39 @@ require_once "../dbc.php";
                       </a>
                     </div>
                   </div>
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table class="table table-striped" id="table-company">
-                        <thead>
-                          <tr>
-                            <th class="text-center">
-                              #
-                            </th>
-                            <th>Voucher Name</th>
-                            <th>Price</th>
-                            <th>Expiry Date</th>
-                            <th>Message</th>
-                            <th>Company Name</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <?php
-                            $sqlquery = "SELECT voucher.vId, voucher.vName , voucher.vPrice , voucher.expirydate, voucher.message, company.companyName FROm company INNER JOIN voucher ON voucher.companyId=company.companyId;";
-                            $result = mysqli_query($con,$sqlquery);
-                            $counter = 1;
-                            while ($rowgetdata=mysqli_fetch_array($result))
-                            {
-                              echo "<tr>";
-                                echo "<td>".$counter."</td>";
-                                echo "<td>".$rowgetdata['vName']."</td>";
-                                echo "<td>".$rowgetdata['vPrice']."</td>";
-                                echo "<td>".$rowgetdata['expirydate']."</td>";
-                                echo "<td>".$rowgetdata['message']."</td>";
-                                echo "<td>".$rowgetdata['companyName']."</td>";
-                                echo "<td><a href='viewevoucher.php?vId=".$rowgetdata['vId']."&vName=".$rowgetdata['vName']."' class='btn btn-primary'>View</a></td>";
-                                $counter++;
-                              echo "</tr>";
-                            }
-                          ?>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
-        <div class="section-body">
-    </div>
+            <div class="section-body">
+          <div class="row">
+        <?php
+        
+                      $sqlquery = "SELECT voucher.vId, voucher.vName , voucher.vPrice , voucher.expirydate, voucher.message, company.companyName FROm company INNER JOIN voucher ON voucher.companyId=company.companyId;";
+                      $result = mysqli_query($con,$sqlquery);
+                      while ($rowgetdata=mysqli_fetch_array($result))
+                      {
+                        
+            echo "<div class='col-lg-3 col-md-6 col-sm-6 col-12'>";
+            echo "<a href='viewevoucher.php?vId=".$rowgetdata['vId']."&vName=".$rowgetdata['vName']."'>";
+            echo  "<div class='card card-statistic-1 pb-3'>";
+            echo    "<div class='card-wrap'>";
+            echo      "<div class='card-header'>";
+            echo        "<h3 style='font-size : 22px;'>".$rowgetdata['vName']."</h3>";
+            echo      "</div>";
+            echo "<br>";
+            echo      "<div class='card-body'>";
+            echo "Rs. ".$rowgetdata['vPrice'];
+            echo        "<p style='font-size: 15px;'>".$rowgetdata['expirydate']."</p>";
+            echo      "</div>";
+            echo    "</div>";
+            echo  "</div>";
+            echo"</a>";
+            echo"</div>";
+            
+                      }
+            ?>
+          </div>
+        </div>
     </section>
 </div>
 <?php include 'layout-footer.php'; ?>

@@ -2,24 +2,35 @@
 // We need to use sessions, so you should always start sessions using the below code.
 session_start();
 // If the user is not logged in redirect to the login page...
-if (!isset($_SESSION['loggedin'])) {
-    header('Location: ../login/index.php');
-    exit;
-}
+if(!isset($_SESSION['IS_LOGIN']))
+  {
+    header('location:../index.php');
+    die();
+  }
+
+  if(isset($_SESSION['ROLE']) && $_SESSION['ROLE']!='2')
+  {
+    header('location:../index.php');
+    die();
+  }
 $voucherId = $_SESSION['voucherId'];
 
 require_once "../dbc.php";
 require_once "testimage.php";
-require_once "testmail.php";
+// require_once "testmail.php";
+require_once "semail.php";
 
 if(isset($_POST['generateImage']))
 {
-    $sqlgetvoucherdetails='select employee.empName, employee.email, voucher.message, voucher.vPrice, voucher.expirydate, voucher.uiimage, voucher.vId, voucher_details.uniqueId, voucher_details.empId from voucher_details INNER JOIN voucher on voucher.vId=voucher_details.vId INNER JOIN employee ON employee.empId=voucher_details.empId where voucher_details.vId='.$voucherId;
+    $subject = "Voucher from ShreeShanti";
+    $from_email = "voucher@shreeshanti.geekconnects.co";
+    $from_fullname = "ShreeShanti";
+    $sqlgetvoucherdetails='select employee.empName, employee.email, voucher.vName, voucher.message, voucher.vPrice, voucher.expirydate, voucher.uiimage, voucher.vId, voucher_details.uniqueId, voucher_details.empId from voucher_details INNER JOIN voucher on voucher.vId=voucher_details.vId INNER JOIN employee ON employee.empId=voucher_details.empId where voucher_details.vId='.$voucherId;
     $result=mysqli_query($con,$sqlgetvoucherdetails);
     while($rowget=mysqli_fetch_array($result))
     {
-        generateImage($rowget['empName'],$rowget['message'],$rowget['vPrice'],$rowget['expirydate'],$rowget['uniqueId'],$rowget['uiimage']);
-        sendEmail($rowget['email'],$rowget['uniqueId']);
+        generateImage($rowget['empName'],$rowget['message'],$rowget['vPrice'],$rowget['expirydate'],$rowget['uniqueId'],$rowget['uiimage'],$rowget['vName']);
+        sendEmail($subject, $rowget['email'], $from_email, $rowget['empName'], $from_fullname, $rowget['uniqueId']);
     }
 }
 
@@ -40,16 +51,18 @@ if(isset($_POST['generateImage']))
                         echo "<span id='uploaded_image'></span>";
                         echo '<img src="imageupload/' . $rowgetdata['uiimage'] . '" id="defaultImage">';
                         echo "<br><br>";
-                        echo     "<h5>Hi, " . $rowgetdata['empName'] . "</h5>";
-                        echo     "<p class='mb-2'>" . $rowgetdata['message'] . "</p>";
-                        echo "<div class='row' style='width: 100%;'>";
-                        echo     "<div class='col-md-5'>";
-                        echo         "<img src='imageupload/view.png'>";
-                        echo     "</div>";
-                        echo     "<div class='col-md-7 my-auto'>";
-                        echo         "<h3>Rs." . $rowgetdata['vPrice'] . "</h3>";
-                        echo         "<h4>*Valid Till " . $rowgetdata['expirydate'] . "</h4>";
-                        echo     "</div>";
+                        echo "<div class='container-fluid'>";
+                        // echo     "<h5>Hi, " . $rowgetdata['empName'] . "</h5>";
+                        // echo     "<p class='mb-2'>" . $rowgetdata['message'] . "</p>";
+                        // echo     "<div class='row' style='width: 100%;'>";
+                        // echo        "<div class='col-md-5'>";
+                        echo          "<img style='margin-left: -13px; margin-top: -22px;' src='imageupload/end.jpg'>";
+                        // echo        "</div>";
+                        // echo        "<div class='col-md-7 my-auto'>";
+                        // echo          "<h3>Rs." . $rowgetdata['vPrice'] . "</h3>";
+                        // echo          "<h4>*Valid Till " . $rowgetdata['expirydate'] . "</h4>";
+                        // echo        "</div>";
+                        // echo      "</div>";
                         echo "</div>";
                     }
                     ?>

@@ -2,10 +2,17 @@
 // We need to use sessions, so you should always start sessions using the below code.
 session_start();
 // If the user is not logged in redirect to the login page...
-if (!isset($_SESSION['loggedin'])) {
-    header('Location: ../login/index.php');
-    exit;
-}
+if(!isset($_SESSION['IS_LOGIN']))
+  {
+    header('location:../index.php');
+    die();
+  }
+
+  if(isset($_SESSION['ROLE']) && $_SESSION['ROLE']!='2')
+  {
+    header('location:../index.php');
+    die();
+  }
 require_once "../dbc.php";
 
 $vId = $_GET['vId'];
@@ -67,7 +74,7 @@ $vName = $_GET['vName'];
                                                     </div>
                                                     <div class="modal-body">
                                                         <?php
-                                                        $sqlquery = "SELECT employee.empId, employee.empName , employee.phoneNo , employee.email, employee.designation, voucher_details.vstatus, voucher_details.vId, voucher_details.reedemDate, voucher_details.amount, voucher_details.reminder, voucher.expirydate FROm voucher_details INNER JOIN employee ON voucher_details.uniqueId = ".$rowgetdata['uniqueId']." INNER JOIN voucher ON voucher.vId=voucher_details.vId;";
+                                                        $sqlquery = "SELECT employee.empId, employee.empName , employee.phoneNo , employee.email, employee.designation, voucher_details.vstatus, voucher_details.vId, voucher_details.amount, voucher_details.reminder, voucher.expirydate, voucher.vPrice FROm ((voucher_details INNER JOIN employee ON voucher_details.empId=employee.empId) INNER JOIN voucher ON voucher_details.vId = voucher.vId )WHERE voucher_details.uniqueId = ".$rowgetdata['uniqueId']."";
                                                         $result = mysqli_query($con, $sqlquery);
                                                         $data = mysqli_fetch_array($result);
                                                         echo "Employee Name : " . $data['empName'] . "</br></br>";
@@ -76,7 +83,6 @@ $vName = $_GET['vName'];
                                                         echo "Employee Designation : " . $data['designation'] . "</br></br>";
                                                         echo "Voucher Status : " . $data['vstatus'] . "</br></br>";
                                                         echo "Voucher Expiry Date : " . $data['expirydate'] . "</br></br>";
-                                                        echo "Reedem Date : " . $data['reedemDate'] . "</br></br>";
                                                         echo "Purchase Amount : " . $data['amount'] . "</br></br>";
                                                         echo "Reminder Count : " . $data['reminder'] . "</br></br>";
                                                         ?>

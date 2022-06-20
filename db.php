@@ -33,7 +33,7 @@ if ($stmt = $con->prepare('SELECT userId, password FROM user_detail WHERE userNa
             $_SESSION['loggedin'] = TRUE;
             $_SESSION['userName'] = $_POST['userName'];
             $_SESSION['userId'] = $userId;
-            header('Location: employee\index.php');
+            header('Location: employee\viewcompany.php');
         } else {
             // Incorrect password
             echo 'Incorrect username and/or password!';

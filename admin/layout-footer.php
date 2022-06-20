@@ -21,6 +21,9 @@
 
 <!-- Template JS File -->
 <script src="../assets/js/scripts.js"></script>
+<script src="../assets/js/fusioncharts.js"></script>
+<script src="../assets/js/fusioncharts.charts.js"></script>
+<script src="../assets/js/fusioncharts.theme.zune.js"></script>
 <script src="../assets/js/custom.js"></script>
 <script src="../assets/js/page/modules-datatables.js"></script>
 
